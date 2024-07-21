@@ -19,12 +19,12 @@ int current_id = 1;
 void create_user(const string& name, const string& nim, const string& asal_kampus, const string& jurusan, const string& fakultas) {
     User user = {current_id++, name, nim, asal_kampus, jurusan, fakultas};
     users.push_back(user);
-    cout << "User successfully added." << endl;
+    cout << "User Sudah Ditambahkan." << endl;
 }
 
 void get_users() {
     if (users.empty()) {
-        cout << "No users found." << endl;
+        cout << "User Tidak Ditemukan." << endl;
         return;
     }
 
@@ -43,48 +43,48 @@ void update_user(int user_id, const string& name, const string& nim, const strin
             user.asal_kampus = asal_kampus;
             user.jurusan = jurusan;
             user.fakultas = fakultas;
-            cout << "User successfully updated." << endl;
+            cout << "User Sudah Diubah." << endl;
             return;
         }
     }
-    cout << "User not found." << endl;
+    cout << "User Tidak Ditemukan." << endl;
 }
 
 void delete_user(int user_id) {
     for (auto it = users.begin(); it != users.end(); ++it) {
         if (it->id == user_id) {
             users.erase(it);
-            cout << "User successfully deleted." << endl;
+            cout << "User Sudah Dihapus." << endl;
             return;
         }
     }
-    cout << "User not found." << endl;
+    cout << "User Tidak Ditemukan." << endl;
 }
 
 int main() {
     int choice;
     while (true) {
         cout << "\nMenu:\n";
-        cout << "1. Add User\n";
-        cout << "2. Show All Users\n";
+        cout << "1. Tambah User\n";
+        cout << "2. Tapilkan Semua Users\n";
         cout << "3. Update User\n";
-        cout << "4. Delete User\n";
+        cout << "4. Hapus User\n";
         cout << "5. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
 
         if (choice == 1) {
             string name, nim, asal_kampus, jurusan, fakultas;
-            cout << "Enter name: ";
+            cout << "Input nama: ";
             cin.ignore();
             getline(cin, name);
-            cout << "Enter NIM: ";
+            cout << "Input NIM: ";
             getline(cin, nim);
-            cout << "Enter Asal Kampus: ";
+            cout << "Input Asal Kampus: ";
             getline(cin, asal_kampus);
-            cout << "Enter Jurusan: ";
+            cout << "Input Jurusan: ";
             getline(cin, jurusan);
-            cout << "Enter Fakultas: ";
+            cout << "Input Fakultas: ";
             getline(cin, fakultas);
             create_user(name, nim, asal_kampus, jurusan, fakultas);
         } else if (choice == 2) {
@@ -92,29 +92,29 @@ int main() {
         } else if (choice == 3) {
             int user_id;
             string name, nim, asal_kampus, jurusan, fakultas;
-            cout << "Enter user ID to update: ";
+            cout << "Input user ID untuk diubah: ";
             cin >> user_id;
             cin.ignore();
-            cout << "Enter new name: ";
+            cout << "Input Nama Baru: ";
             getline(cin, name);
-            cout << "Enter new NIM: ";
+            cout << "Input NIM Baru: ";
             getline(cin, nim);
-            cout << "Enter new Asal Kampus: ";
+            cout << "Input Asal Kampus Baru: ";
             getline(cin, asal_kampus);
-            cout << "Enter new Jurusan: ";
+            cout << "Input Jurusan Baru: ";
             getline(cin, jurusan);
-            cout << "Enter new Fakultas: ";
+            cout << "Input Fakultas Baru: ";
             getline(cin, fakultas);
             update_user(user_id, name, nim, asal_kampus, jurusan, fakultas);
         } else if (choice == 4) {
             int user_id;
-            cout << "Enter user ID to delete: ";
+            cout << "Input ID untuk Dihapus: ";
             cin >> user_id;
             delete_user(user_id);
         } else if (choice == 5) {
             break;
         } else {
-            cout << "Invalid choice. Please try again." << endl;
+            cout << "Pilihan Tidak Valid!!! Silahkan Coba Lagi." << endl;
         }
     }
     return 0;
