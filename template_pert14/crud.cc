@@ -1,6 +1,7 @@
 #include <iostream>
 #include <mysql/mysql.h>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 
@@ -23,53 +24,75 @@ void tambah_user(const string& username, const string& password, bool is_admin =
 bool login_user(const string& username, const string& password);
 bool login_admin(const string& username, const string& password);
 
-MYSQL* connect_db() {
+void clear_input() {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+MYSQL* connect_db() 
+{
     MYSQL* conn = mysql_init(0);
-    if (conn) {
+    if (conn) 
+    {
         conn = mysql_real_connect(conn, hostname, user, pass, dbname, port, unixsocket, clientflag);
-        if (conn) {
+        if (conn) 
+        {
             cout << "Terhubung ke database dengan sukses." << endl;
-        } else {
+        } 
+        else 
+        {
             cerr << "Koneksi gagal: " << mysql_error(conn) << endl;
         }
-    } else {
+    } 
+    else 
+    {
         cerr << "mysql_init gagal" << endl;
     }
     return conn;
 }
 
-void tambah_buku(const string& judul, const string& penulis, int tahun, int jumlah) {
+void tambah_buku(const string& judul, const string& penulis, int tahun, int jumlah) 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "INSERT INTO perpustakaan (title, author, year, copies) VALUES ('" << judul << "', '" << penulis << "', " << tahun << ", " << jumlah << ")";
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "INSERT gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             cout << "Buku berhasil ditambahkan." << endl;
         }
         mysql_close(conn);
     }
 }
 
-void tampilkan_buku() {
+void tampilkan_buku() 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
-        if (mysql_query(conn, "SELECT * FROM perpustakaan")) {
+    if (conn) 
+    {
+        if (mysql_query(conn, "SELECT * FROM perpustakaan")) 
+        {
             cerr << "SELECT gagal: " << mysql_error(conn) << endl;
             mysql_close(conn);
             return;
         }
 
         MYSQL_RES* res = mysql_store_result(conn);
-        if (res == nullptr) {
+        if (res == nullptr) 
+        {
             cerr << "mysql_store_result gagal: " << mysql_error(conn) << endl;
             mysql_close(conn);
             return;
         }
 
         MYSQL_ROW row;
-        while ((row = mysql_fetch_row(res))) {
+        while ((row = mysql_fetch_row(res))) 
+        {
             cout << "ID: " << row[0] << ", Judul: " << row[1] << ", Penulis: " << row[2] << ", Tahun: " << row[3] << ", Jumlah: " << row[4] << endl;
         }
 
@@ -78,45 +101,63 @@ void tampilkan_buku() {
     }
 }
 
-void ubah_buku(int id_buku, const string& judul, const string& penulis, int tahun, int jumlah) {
+void ubah_buku(int id_buku, const string& judul, const string& penulis, int tahun, int jumlah) 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "UPDATE perpustakaan SET title = '" << judul << "', author = '" << penulis << "', year = " << tahun << ", copies = " << jumlah << " WHERE id = " << id_buku;
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "UPDATE gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             cout << "Buku berhasil diubah." << endl;
         }
         mysql_close(conn);
     }
 }
 
-void hapus_buku(int id_buku) {
+void hapus_buku(int id_buku) 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "DELETE FROM perpustakaan WHERE id = " << id_buku;
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "DELETE gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             cout << "Buku berhasil dihapus." << endl;
         }
         mysql_close(conn);
     }
 }
 
-void pinjam_buku(int id_buku) {
+void pinjam_buku(int id_buku) 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "UPDATE perpustakaan SET copies = copies - 1 WHERE id = " << id_buku << " AND copies > 0";
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "Pinjam gagal: " << mysql_error(conn) << endl;
-        } else {
-            if (mysql_affected_rows(conn) > 0) {
+        } 
+        else 
+        {
+            if (mysql_affected_rows(conn) > 0) 
+            {
                 cout << "Buku berhasil dipinjam." << endl;
-            } else {
+            } 
+            else 
+            {
                 cout << "Buku tidak tersedia untuk dipinjam." << endl;
             }
         }
@@ -124,52 +165,73 @@ void pinjam_buku(int id_buku) {
     }
 }
 
-void kembalikan_buku(int id_buku) {
+void kembalikan_buku(int id_buku) 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "UPDATE perpustakaan SET copies = copies + 1 WHERE id = " << id_buku;
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "Kembalikan gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             cout << "Buku berhasil dikembalikan." << endl;
         }
         mysql_close(conn);
     }
 }
 
-void tambah_user(const string& username, const string& password, bool is_admin) {
+void tambah_user(const string& username, const string& password, bool is_admin) 
+{
     MYSQL* conn = connect_db();
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
-        if (is_admin) {
+        if (is_admin) 
+        {
             query << "INSERT INTO admins (username, password) VALUES ('" << username << "', '" << password << "')";
-        } else {
+        } 
+        else 
+        {
             query << "INSERT INTO users (username, password) VALUES ('" << username << "', '" << password << "')";
         }
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "Register user gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             cout << "User berhasil diregistrasi." << endl;
         }
         mysql_close(conn);
     }
 }
 
-bool login_user(const string& username, const string& password) {
+bool login_user(const string& username, const string& password) 
+{
     MYSQL* conn = connect_db();
     bool login_success = false;
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "SELECT * FROM users WHERE username = '" << username << "' AND password = '" << password << "'";
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "Login gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             MYSQL_RES* res = mysql_store_result(conn);
-            if (res != nullptr && mysql_num_rows(res) > 0) {
+            if (res != nullptr && mysql_num_rows(res) > 0) 
+            {
                 login_success = true;
                 cout << "Login berhasil." << endl;
-            } else {
+            } 
+            else 
+            {
                 cout << "Username atau password salah." << endl;
             }
             mysql_free_result(res);
@@ -179,20 +241,28 @@ bool login_user(const string& username, const string& password) {
     return login_success;
 }
 
-bool login_admin(const string& username, const string& password) {
+bool login_admin(const string& username, const string& password) 
+{
     MYSQL* conn = connect_db();
     bool login_success = false;
-    if (conn) {
+    if (conn) 
+    {
         stringstream query;
         query << "SELECT * FROM admins WHERE username = '" << username << "' AND password = '" << password << "'";
-        if (mysql_query(conn, query.str().c_str())) {
+        if (mysql_query(conn, query.str().c_str())) 
+        {
             cerr << "Login gagal: " << mysql_error(conn) << endl;
-        } else {
+        } 
+        else 
+        {
             MYSQL_RES* res = mysql_store_result(conn);
-            if (res != nullptr && mysql_num_rows(res) > 0) {
+            if (res != nullptr && mysql_num_rows(res) > 0) 
+            {
                 login_success = true;
                 cout << "Login berhasil." << endl;
-            } else {
+            } 
+            else 
+            {
                 cout << "Username atau password salah." << endl;
             }
             mysql_free_result(res);
@@ -202,8 +272,10 @@ bool login_admin(const string& username, const string& password) {
     return login_success;
 }
 
-int main() {
-    while (true) {
+int main() 
+{
+    while (true) 
+    {
         int role_choice;
         cout << "Masukan Pilihan : \n";
         cout << "1. Register\n";
@@ -212,11 +284,19 @@ int main() {
         cout << "Masukkan pilihan: ";
         cin >> role_choice;
 
-        if (role_choice == 3) {
+        if (cin.fail() || (role_choice < 1 || role_choice > 3)) {
+            clear_input();
+            cout << "Input tidak valid. Silakan coba lagi." << endl;
+            continue;
+        }
+
+        if (role_choice == 3) 
+        {
             break;
         }
 
-        if (role_choice == 1) {
+        if (role_choice == 1) 
+        {
             int reg_choice;
             cout << "Register sebagai:\n";
             cout << "1. Admin\n";
@@ -224,21 +304,30 @@ int main() {
             cout << "Masukkan pilihan: ";
             cin >> reg_choice;
 
+            if (cin.fail() || (reg_choice < 1 || reg_choice > 2)) {
+                clear_input();
+                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                continue;
+            }
+
             string username, password;
             cout << "Masukkan username: ";
             cin >> username;
             cout << "Masukkan password: ";
             cin >> password;
 
-            if (reg_choice == 1) {
+            if (reg_choice == 1) 
+            {
                 tambah_user(username, password, true);
-            } else if (reg_choice == 2) {
+            } 
+            else if (reg_choice == 2) 
+            {
                 tambah_user(username, password, false);
-            } else {
-                cout << "Pilihan tidak valid." << endl;
             }
 
-        } else if (role_choice == 2) {
+        } 
+        else if (role_choice == 2) 
+        {
             int login_choice;
             cout << "Login sebagai:\n";
             cout << "1. Admin\n";
@@ -246,16 +335,25 @@ int main() {
             cout << "Masukkan pilihan: ";
             cin >> login_choice;
 
+            if (cin.fail() || (login_choice < 1 || login_choice > 2)) {
+                clear_input();
+                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                continue;
+            }
+
             string username, password;
             cout << "Masukkan username: ";
             cin >> username;
             cout << "Masukkan password: ";
             cin >> password;
 
-            if (login_choice == 1) {
-                if (login_admin(username, password)) {
+            if (login_choice == 1) 
+            {
+                if (login_admin(username, password)) 
+                {
                     // Admin Menu
-                    while (true) {
+                    while (true) 
+                    {
                         int choice;
                         cout << "Menu Admin:\n";
                         cout << "1. Tambah Buku\n";
@@ -266,7 +364,14 @@ int main() {
                         cout << "Masukkan pilihan: ";
                         cin >> choice;
 
-                        if (choice == 1) {
+                        if (cin.fail() || (choice < 1 || choice > 5)) {
+                            clear_input();
+                            cout << "Input tidak valid. Silakan coba lagi." << endl;
+                            continue;
+                        }
+
+                        if (choice == 1) 
+                        {
                             string judul, penulis;
                             int tahun, jumlah;
                             cout << "Masukkan judul buku: ";
@@ -276,17 +381,36 @@ int main() {
                             getline(cin, penulis);
                             cout << "Masukkan tahun terbit: ";
                             cin >> tahun;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             cout << "Masukkan jumlah buku: ";
                             cin >> jumlah;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             tambah_buku(judul, penulis, tahun, jumlah);
-                        } else if (choice == 2) {
+                        } 
+                        else if (choice == 2) 
+                        {
                             tampilkan_buku();
-                        } else if (choice == 3) {
+                        } 
+                        else if (choice == 3) 
+                        {
                             int id_buku;
                             string judul, penulis;
                             int tahun, jumlah;
                             cout << "Masukkan ID buku yang akan diubah: ";
                             cin >> id_buku;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             cout << "Masukkan judul baru: ";
                             cin.ignore();
                             getline(cin, judul);
@@ -294,27 +418,48 @@ int main() {
                             getline(cin, penulis);
                             cout << "Masukkan tahun terbit baru: ";
                             cin >> tahun;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             cout << "Masukkan jumlah buku baru: ";
                             cin >> jumlah;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             ubah_buku(id_buku, judul, penulis, tahun, jumlah);
-                        } else if (choice == 4) {
+                        } 
+                        else if (choice == 4) 
+                        {
                             int id_buku;
                             cout << "Masukkan ID buku yang akan dihapus: ";
                             cin >> id_buku;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             hapus_buku(id_buku);
-                        } else if (choice == 5) {
+                        } 
+                        else if (choice == 5) 
+                        {
                             cout << "Logout berhasil." << endl;
                             break;
-                        } else {
-                            cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
                         }
                     }
                 }
 
-            } else if (login_choice == 2) {
-                if (login_user(username, password)) {
+            } 
+            else if (login_choice == 2) 
+            {
+                if (login_user(username, password)) 
+                {
                     // User Menu
-                    while (true) {
+                    while (true) 
+                    {
                         int choice;
                         cout << "Menu User:\n";
                         cout << "1. Tampilkan Buku\n";
@@ -324,33 +469,50 @@ int main() {
                         cout << "Masukkan pilihan: ";
                         cin >> choice;
 
-                        if (choice == 1) {
+                        if (cin.fail() || (choice < 1 || choice > 4)) {
+                            clear_input();
+                            cout << "Input tidak valid. Silakan coba lagi." << endl;
+                            continue;
+                        }
+
+                        if (choice == 1) 
+                        {
                             tampilkan_buku();
-                        } else if (choice == 2) {
+                        } 
+                        else if (choice == 2) 
+                        {
                             int id_buku;
                             cout << "Masukkan ID buku yang akan dipinjam: ";
                             cin >> id_buku;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             pinjam_buku(id_buku);
-                        } else if (choice == 3) {
+                        } 
+                        else if (choice == 3) 
+                        {
                             int id_buku;
                             cout << "Masukkan ID buku yang akan dikembalikan: ";
                             cin >> id_buku;
+                            if (cin.fail()) {
+                                clear_input();
+                                cout << "Input tidak valid. Silakan coba lagi." << endl;
+                                continue;
+                            }
                             kembalikan_buku(id_buku);
-                        } else if (choice == 4) {
+                        } 
+                        else if (choice == 4) 
+                        {
                             cout << "Logout berhasil." << endl;
-                            break;
-                        } else {
-                            cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
+                            break;4
+                            
                         }
                     }
                 }
 
-            } else {
-                cout << "Pilihan tidak valid." << endl;
             }
-
-        } else {
-            cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
         }
     }
     return 0;
